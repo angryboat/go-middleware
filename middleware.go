@@ -10,8 +10,8 @@ Basic Usage
 		middleware.Recovery(log.Default().Writer()),
   )
 
-  // Wrap the fooHandler in the logger middleware http.Handle("/foo",
-  logger(fooHandler))
+  // Wrap the fooHandler in the logger middleware.
+  http.Handle("/foo", stack(fooHandler))
 */
 package middleware
 
