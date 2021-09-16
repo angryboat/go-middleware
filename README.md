@@ -6,6 +6,10 @@
 
 - [Documentation](https://pkg.go.dev/github.com/angryboat/go-middleware)
 
+- [GitHub Repo](https://github.com/angryboat/go-middleware)
+
+- [Issues](https://github.com/angryboat/go-middleware/issues)
+
 ## Basic Usage
 
 ```go
