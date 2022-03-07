@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"time"
@@ -19,7 +18,7 @@ func Logger(logger RequestLogger) MiddlewareFunc {
 			next.ServeHTTP(w, r)
 			deltaTime := time.Since(startTime)
 
-			logRequest := r.Clone(context.Background())
+			logRequest := r.Clone(r.Context())
 
 			defer logger.Log(w.StatusCode, deltaTime, logRequest)
 
