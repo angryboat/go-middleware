@@ -15,8 +15,12 @@ import (
 func Recovery(logger io.Writer) MiddlewareFunc {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+			rec := NewResponseWriter()
+
 			defer func() {
-				if panicErr := recover(); panicErr != nil {
+				panicErr := recover()
+
+				if panicErr != nil {
 					var err error
 					switch t := panicErr.(type) {
 					case string:
@@ -36,9 +40,12 @@ func Recovery(logger io.Writer) MiddlewareFunc {
 					logger.Write(errorContext)
 
 					http.Error(rw, err.Error(), http.StatusInternalServerError)
+				} else {
+					rec.Apply(rw)
 				}
 			}()
-			next.ServeHTTP(rw, r)
+
+			next.ServeHTTP(rec, r)
 		})
 	}
 }
