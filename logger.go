@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"time"
+
+	"golang.org/x/exp/slog"
 )
 
 // Logger performs the next handler then calls RequestLogger.Log with the
@@ -41,3 +43,22 @@ func (l *dRequestLogger) Log(status int, runtime time.Duration, request *http.Re
 
 // DefaultRequestLogger provides a simple log message written to log.Default()
 var DefaultRequestLogger RequestLogger = new(dRequestLogger)
+
+func NewStructuredRequestLogger(l *slog.Logger) RequestLogger {
+	return &sRequestLogger{l}
+}
+
+type sRequestLogger struct {
+	l *slog.Logger
+}
+
+func (l *sRequestLogger) Log(status int, runtime time.Duration, request *http.Request) {
+	l.l.Info("Request Completed",
+		slog.Group("request",
+			slog.String("method", request.Method),
+			slog.String("path", request.URL.EscapedPath()),
+		),
+		slog.Int("status", status),
+		slog.String("runtime", runtime.String()),
+	)
+}
