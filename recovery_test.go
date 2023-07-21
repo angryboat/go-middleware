@@ -21,9 +21,21 @@ func TestRecovery(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	rr := httptest.NewRecorder()
+	t.Run("without panic", func(t *testing.T) {
+		rr := httptest.NewRecorder()
+
+		defer tLogger.Reset()
+
+		recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+			rw.WriteHeader(http.StatusNotFound)
+		})).ServeHTTP(rr, req)
+
+		assert.Equal(t, http.StatusNotFound, rr.Code)
+	})
 
 	t.Run("given a string", func(t *testing.T) {
+		rr := httptest.NewRecorder()
+
 		defer tLogger.Reset()
 
 		recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -35,6 +47,8 @@ func TestRecovery(t *testing.T) {
 	})
 
 	t.Run("given an error", func(t *testing.T) {
+		rr := httptest.NewRecorder()
+
 		defer tLogger.Reset()
 
 		recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
@@ -46,6 +60,8 @@ func TestRecovery(t *testing.T) {
 	})
 
 	t.Run("given an int", func(t *testing.T) {
+		rr := httptest.NewRecorder()
+
 		defer tLogger.Reset()
 
 		recovery(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
