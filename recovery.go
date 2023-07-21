@@ -46,8 +46,6 @@ func Recovery(logger io.Writer) MiddlewareFunc {
 			}()
 
 			next.ServeHTTP(rec, r)
-
-			rec.Apply(rw)
 		})
 	}
 }
