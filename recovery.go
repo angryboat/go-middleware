@@ -40,12 +40,12 @@ func Recovery(logger io.Writer) MiddlewareFunc {
 					logger.Write(errorContext)
 
 					http.Error(rw, err.Error(), http.StatusInternalServerError)
-				} else {
-					rec.Apply(rw)
 				}
 			}()
 
 			next.ServeHTTP(rec, r)
+
+			rec.Apply(rw)
 		})
 	}
 }

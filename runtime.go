@@ -11,7 +11,7 @@ func ResponseRuntime(header string) MiddlewareFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ww := NewResponseWriter()
 			startTime := time.Now()
-			next.ServeHTTP(w, r)
+			next.ServeHTTP(ww, r)
 			ww.Header().Set(header, time.Since(startTime).String())
 			ww.Apply(w)
 		})
