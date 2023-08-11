@@ -4,8 +4,7 @@ import (
 	"log"
 	"net/http"
 	"time"
-
-	"golang.org/x/exp/slog"
+	"log/slog"
 )
 
 // Logger performs the next handler then calls RequestLogger.Log with the
