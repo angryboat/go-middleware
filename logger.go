@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"context"
 	"log"
+	"log/slog"
 	"net/http"
 	"time"
-	"log/slog"
 )
 
 // Logger performs the next handler then calls RequestLogger.Log with the
@@ -43,16 +44,16 @@ func (l *dRequestLogger) Log(status int, runtime time.Duration, request *http.Re
 // DefaultRequestLogger provides a simple log message written to log.Default()
 var DefaultRequestLogger RequestLogger = new(dRequestLogger)
 
-func NewStructuredRequestLogger(l *slog.Logger) RequestLogger {
+func NewStructuredRequestLogger(l SLogger) RequestLogger {
 	return &sRequestLogger{l}
 }
 
 type sRequestLogger struct {
-	l *slog.Logger
+	l SLogger
 }
 
 func (l *sRequestLogger) Log(status int, runtime time.Duration, request *http.Request) {
-	l.l.Info("Request Completed",
+	l.l.InfoContext(request.Context(), "Request Completed",
 		slog.Group("request",
 			slog.String("method", request.Method),
 			slog.String("path", request.URL.EscapedPath()),
@@ -60,4 +61,10 @@ func (l *sRequestLogger) Log(status int, runtime time.Duration, request *http.Re
 		slog.Int("status", status),
 		slog.String("runtime", runtime.String()),
 	)
+}
+
+type SLogger interface {
+	DebugContext(context.Context, string, ...any)
+	InfoContext(context.Context, string, ...any)
+	ErrorContext(context.Context, string, ...any)
 }
